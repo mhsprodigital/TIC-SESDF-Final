@@ -110,26 +110,35 @@ const App: React.FC = () => {
       flatData['Sugestões'] = state.sugestoes;
 
       // Enviar para o Google Sheets via Apps Script
-      const scriptUrl = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbzn5iDaRqpzOwO_yB4NgwMMI2MMbftIkCZ-525Y4jimv57_TquJpomTbIVlt6DGqLMs/exec";
+      let scriptUrl = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL;
       
-      if (!scriptUrl) {
-        throw new Error("URL do Google Script não configurada.");
+      // Fallback robusto caso a variável de ambiente não esteja configurada ou esteja vazia no Netlify
+      if (!scriptUrl || scriptUrl === 'undefined' || scriptUrl.trim() === '') {
+        scriptUrl = "https://script.google.com/macros/s/AKfycbzn5iDaRqpzOwO_yB4NgwMMI2MMbftIkCZ-525Y4jimv57_TquJpomTbIVlt6DGqLMs/exec";
       }
+      
+      // Limpar aspas acidentais que podem ocorrer ao colar no Netlify
+      scriptUrl = scriptUrl.replace(/^["']|["']$/g, '').trim();
 
-      await fetch(scriptUrl, {
-        method: 'POST',
-        mode: 'no-cors', // Necessário para evitar erro de CORS no Google Apps Script
-        headers: {
-          'Content-Type': 'text/plain', // Usar text/plain para evitar preflight
-        },
-        body: JSON.stringify(flatData)
-      });
-
-      // Como mode: 'no-cors' não retorna status, assumimos sucesso se não houver erro de rede
-      next();
+      try {
+        await fetch(scriptUrl, {
+          method: 'POST',
+          mode: 'no-cors', // Mantemos no-cors pois é o padrão mais seguro para Apps Script
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+          body: JSON.stringify(flatData)
+        });
+        
+        // Como mode: 'no-cors' não retorna status, assumimos sucesso se não houver erro de rede
+        next();
+      } catch (fetchErr) {
+        console.error("Erro no fetch:", fetchErr);
+        throw new Error("Falha na requisição de rede.");
+      }
     } catch (err) {
       console.error("Erro ao finalizar:", err);
-      alert("Houve um erro ao salvar seus dados. Verifique se a URL do Google Script está configurada corretamente.");
+      alert("Houve um erro ao salvar seus dados. Verifique as permissões do Google Apps Script.");
     } finally {
       setIsSubmitting(false);
     }
