@@ -19,7 +19,6 @@ import {
   PC_OPCOES,
   PC_SUFICIENCIA_OPCOES
 } from './constants';
-import { supabase } from './supabaseClient';
 
 const App: React.FC = () => {
   const [state, setState] = useState<SurveyState>({
@@ -68,36 +67,69 @@ const App: React.FC = () => {
   const handleFinish = async () => {
     setIsSubmitting(true);
     try {
-      // Salvar no Supabase
-      const { error } = await supabase.from('surveys').insert([{
-        nome_gestor: state.profile.nomeGestor,
-        idade: state.profile.idade,
-        sexo: state.profile.sexo,
-        formacao: state.profile.formacao,
-        cargo_efetivo: state.profile.cargoEfetivo,
-        data_admissao: state.profile.dataAdmissao,
-        cargo_gsap: state.profile.cargoGsap,
-        tempo_gestao_gsap: state.profile.tempoGestaoGsap,
-        regiao_gsap: state.profile.regiaoGsap,
-        quantidade_ubs: state.profile.quantidadeUbs,
-        internet_acesso: state.profile.internetAcesso,
-        computadores_qtd: state.profile.computadoresQtd,
-        computadores_suficiencia: state.profile.computadoresSuficiencia,
-        selected_systems: state.selectedSystems,
-        evaluations: state.evaluations,
-        produtividade: {
-          ...state.produtividade,
-          ...(state.produtividadeOutroNome ? { Outros_Especificado: state.produtividadeOutroNome } : {})
-        },
-        barreiras: state.barreiras,
-        sugestoes: state.sugestoes
-      }]);
+      // Formatar os dados de forma linear (uma coluna por campo)
+      const flatData: Record<string, any> = {
+        "Data e Hora": new Date().toLocaleString('pt-BR'),
+        "Nome": state.profile.nomeGestor,
+        "Idade": state.profile.idade,
+        "Sexo": state.profile.sexo,
+        "Formação": state.profile.formacao,
+        "Cargo Efetivo": state.profile.cargoEfetivo,
+        "Data de Admissão": state.profile.dataAdmissao,
+        "Cargo GSAP": state.profile.cargoGsap,
+        "Tempo de Gestão": state.profile.tempoGestaoGsap,
+        "Região de Saúde": state.profile.regiaoGsap,
+        "Quantidade de UBS": state.profile.quantidadeUbs,
+        "Acesso à Internet": state.profile.internetAcesso,
+        "Quantidade de Computadores": state.profile.computadoresQtd,
+        "Suficiência de Computadores": state.profile.computadoresSuficiencia,
+      };
 
-      if (error) throw error;
+      // Sistemas
+      SISTEMAS_SES.forEach(sys => {
+        if (state.selectedSystems.includes(sys)) {
+          flatData[`Sistema: ${sys} (Frequência)`] = state.evaluations[sys]?.freq || '';
+          flatData[`Sistema: ${sys} (Confiança)`] = state.evaluations[sys]?.confianca || '';
+        } else {
+          flatData[`Sistema: ${sys} (Frequência)`] = 'Não utiliza';
+          flatData[`Sistema: ${sys} (Confiança)`] = 'Não utiliza';
+        }
+      });
+
+      // Produtividade
+      FERRAMENTAS_PROD.forEach(tool => {
+        flatData[`Produtividade: ${tool}`] = state.produtividade[tool] || '';
+      });
+      flatData['Produtividade: Outros (Especificado)'] = state.produtividadeOutroNome || '';
+
+      // Barreiras
+      BARREIRAS_LIST.forEach(barreira => {
+        flatData[`Barreira: ${barreira}`] = state.barreiras[barreira] || '';
+      });
+
+      flatData['Sugestões'] = state.sugestoes;
+
+      // Enviar para o Google Sheets via Apps Script
+      const scriptUrl = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbzn5iDaRqpzOwO_yB4NgwMMI2MMbftIkCZ-525Y4jimv57_TquJpomTbIVlt6DGqLMs/exec";
+      
+      if (!scriptUrl) {
+        throw new Error("URL do Google Script não configurada.");
+      }
+
+      await fetch(scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors', // Necessário para evitar erro de CORS no Google Apps Script
+        headers: {
+          'Content-Type': 'text/plain', // Usar text/plain para evitar preflight
+        },
+        body: JSON.stringify(flatData)
+      });
+
+      // Como mode: 'no-cors' não retorna status, assumimos sucesso se não houver erro de rede
       next();
     } catch (err) {
       console.error("Erro ao finalizar:", err);
-      alert("Houve um erro ao salvar seus dados. Por favor, tente novamente.");
+      alert("Houve um erro ao salvar seus dados. Verifique se a URL do Google Script está configurada corretamente.");
     } finally {
       setIsSubmitting(false);
     }
