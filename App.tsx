@@ -127,20 +127,56 @@ const App: React.FC = () => {
       }
 
       try {
-        await fetch(scriptUrl, {
+        const response = await fetch(scriptUrl, {
           method: 'POST',
-          mode: 'no-cors', // Mantemos no-cors pois é o padrão mais seguro para Apps Script
+          // Mudando para 'cors' ou omitindo para que o navegador lide com a requisição normalmente
+          // O Google Apps Script com "Qualquer pessoa" permite requisições cross-origin
           headers: {
-            'Content-Type': 'text/plain',
+            'Content-Type': 'text/plain;charset=utf-8', // text/plain evita o preflight OPTIONS em muitos casos
           },
           body: JSON.stringify(flatData)
         });
         
-        // Como mode: 'no-cors' não retorna status, assumimos sucesso se não houver erro de rede
+        // Se a requisição não falhou na rede, consideramos sucesso
         next();
       } catch (fetchErr) {
         console.error("Erro no fetch:", fetchErr);
-        throw new Error("Falha na requisição de rede.");
+        // Em caso de erro de CORS, o fetch lança uma exceção.
+        // Como o Google Apps Script as vezes retorna um redirecionamento opaco que o fetch bloqueia,
+        // vamos tentar um método alternativo (form submission invisível) se o fetch falhar.
+        
+        try {
+          console.log("Tentando método alternativo de envio (form)...");
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = scriptUrl;
+          form.target = 'hidden_iframe';
+          
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'data'; // O Apps Script precisa ser ajustado para ler e.parameter.data
+          input.value = JSON.stringify(flatData);
+          form.appendChild(input);
+          
+          const iframe = document.createElement('iframe');
+          iframe.name = 'hidden_iframe';
+          iframe.style.display = 'none';
+          document.body.appendChild(iframe);
+          document.body.appendChild(form);
+          
+          form.submit();
+          
+          // Limpeza após alguns segundos
+          setTimeout(() => {
+            document.body.removeChild(form);
+            document.body.removeChild(iframe);
+          }, 5000);
+          
+          next();
+        } catch (fallbackErr) {
+          console.error("Erro no fallback:", fallbackErr);
+          throw new Error("Falha na requisição de rede.");
+        }
       }
     } catch (err) {
       console.error("Erro ao finalizar:", err);

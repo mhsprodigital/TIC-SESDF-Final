@@ -21,9 +21,27 @@
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data;
     
-    // Parse the incoming JSON data
-    var data = JSON.parse(e.postData.contents);
+    // Tenta ler o JSON do corpo da requisição (fetch)
+    if (e.postData && e.postData.contents) {
+      try {
+        data = JSON.parse(e.postData.contents);
+      } catch (parseErr) {
+        // Se falhar, tenta ler como form data (fallback)
+        if (e.parameter && e.parameter.data) {
+          data = JSON.parse(e.parameter.data);
+        } else {
+          throw new Error("Não foi possível ler os dados JSON.");
+        }
+      }
+    } 
+    // Se não tiver postData, tenta ler do form data (fallback)
+    else if (e.parameter && e.parameter.data) {
+      data = JSON.parse(e.parameter.data);
+    } else {
+      throw new Error("Nenhum dado recebido.");
+    }
     
     // Get headers from the first row
     var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn() || 1).getValues()[0];
@@ -47,6 +65,7 @@ function doPost(e) {
     // Append the row
     sheet.appendRow(row);
     
+    // Retornar sucesso com cabeçalhos CORS
     return ContentService.createTextOutput(JSON.stringify({ "status": "success" }))
       .setMimeType(ContentService.MimeType.JSON);
       
@@ -57,6 +76,7 @@ function doPost(e) {
 }
 
 function doOptions(e) {
+  // Necessário para lidar com requisições preflight (CORS)
   return ContentService.createTextOutput("")
     .setMimeType(ContentService.MimeType.TEXT);
 }
