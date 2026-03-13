@@ -114,11 +114,17 @@ const App: React.FC = () => {
       
       // Fallback robusto caso a variável de ambiente não esteja configurada ou esteja vazia no Netlify
       if (!scriptUrl || scriptUrl === 'undefined' || scriptUrl.trim() === '') {
-        scriptUrl = "https://script.google.com/macros/s/AKfycbzn5iDaRqpzOwO_yB4NgwMMI2MMbftIkCZ-525Y4jimv57_TquJpomTbIVlt6DGqLMs/exec";
+        scriptUrl = "https://script.google.com/macros/s/AKfycbyJZCvRKcIMS43viQOBGJH64AOv-NTcwM706_2Hj2c/exec";
       }
       
       // Limpar aspas acidentais que podem ocorrer ao colar no Netlify
       scriptUrl = scriptUrl.replace(/^["']|["']$/g, '').trim();
+
+      // CORREÇÃO CRÍTICA: URLs terminadas em /dev NÃO funcionam no Netlify (bloqueio de cookies de terceiros).
+      // O Google Apps Script exige que chamadas externas usem a URL de implantação /exec.
+      if (scriptUrl.endsWith('/dev')) {
+        scriptUrl = scriptUrl.replace(/\/dev$/, '/exec');
+      }
 
       try {
         await fetch(scriptUrl, {
