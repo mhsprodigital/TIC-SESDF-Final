@@ -231,11 +231,39 @@ const App: React.FC = () => {
                 <h2 className="text-2xl font-black">Termo de Consentimento Livre e Esclarecido (TCLE)</h2>
               </div>
               <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 text-slate-600 leading-relaxed text-sm md:text-base space-y-6 shadow-inner custom-scrollbar overflow-y-auto max-h-[400px]">
-                <p>Você está convidado(a) a participar da pesquisa intitulada <strong>"Gestão da Informação na Atenção Primária à Saúde: Uso de Sistemas e Ferramentas Digitais pelos Gestores do Distrito Federal"</strong>, conduzida por pesquisadores da FEPECS.</p>
-                <p><strong>Objetivo:</strong> O presente estudo tem como finalidade realizar um diagnóstico detalhado do ecossistema tecnológico da SES-DF, identificando gargalos, potencialidades e o nível de integração das ferramentas digitais na rotina da Atenção Primária.</p>
-                <p><strong>Segurança e Privacidade:</strong> Garantimos que sua participação é estritamente anônima. Os dados coletados são criptografados de ponta a ponta, assegurando que nenhuma resposta possa ser vinculada à sua identidade ou à sua unidade de saúde específica. As informações serão tratadas de forma agregada para fins de análise estatística e científica.</p>
-                <p><strong>Participação:</strong> A sua colaboração é voluntária e você pode interromper o preenchimento a qualquer momento, sem qualquer penalidade. O tempo estimado é de 15 minutos.</p>
-                <p>Ao selecionar a option "Li e concordo", você declara estar ciente dos objetivos e da proteção dos seus dados, consentindo com a sua utilização para este diagnóstico.</p>
+                <p>O(a) senhor(a) está sendo convidado(a) a participar da pesquisa intitulada <strong>“Gestão da Informação na Atenção Primária à Saúde: uso de sistemas e ferramentas digitais pelos gestores do Distrito Federal”</strong>, realizada pelos pesquisadores Letícia Dinegri, Matheus Henrique de Sousa, Marco Antonio Ferreira Almeida e Yonara Cerqueira Ferreira, vinculados à Residência Multiprofissional em Gestão de Políticas Públicas para a Saúde da Escola de Saúde Pública do Distrito Federal.</p>
+                <p><strong>Objetivo da pesquisa:</strong><br/>
+                O objetivo desta pesquisa é analisar o uso de sistemas de informação e ferramentas digitais na rotina de gestão das Unidades Básicas de Saúde do Distrito Federal.</p>
+                <p><strong>Procedimentos:</strong><br/>
+                A sua participação consistirá em responder a um questionário eletrônico sobre o uso de sistemas de informação e ferramentas digitais na gestão da unidade de saúde onde atua. O questionário será respondido de forma online, com tempo estimado de aproximadamente 10 minutos.</p>
+                <p><strong>Voluntariedade e liberdade de participação:</strong><br/>
+                A sua participação é voluntária. O(a) senhor(a) pode recusar ou desistir de participar a qualquer momento, sem qualquer prejuízo profissional ou institucional.</p>
+                <p><strong>Riscos e desconfortos:</strong><br/>
+                Toda pesquisa envolve riscos. Nesta pesquisa, os riscos são mínimos, podendo incluir eventual desconforto ao responder às perguntas e o risco de acesso à informação por terceiros não relacionados à pesquisa ou identificação dos participantes, uma vez que serão coletadas informações pessoais e profissionais, incluindo o nome.<br/><br/>
+                A identificação dos participantes será utilizada exclusivamente para fins de qualificação e consistência dos dados no contexto da pesquisa, não sendo utilizada para análise ou divulgação. Os dados serão anonimizados desde o início do seu tratamento, garantindo que nenhuma informação analisada ou divulgada permita a identificação dos participantes.<br/><br/>
+                Para minimizar os riscos, as informações serão tratadas de forma confidencial, armazenadas em ambiente seguro e com acesso restrito aos pesquisadores. Os resultados serão apresentados de forma agregada, sem qualquer identificação individual dos participantes.</p>
+                <p><strong>Benefícios:</strong><br/>
+                Os resultados da pesquisa poderão contribuir para o aprimoramento da gestão da informação na Atenção Primária à Saúde do Distrito Federal.</p>
+                <p><strong>Sigilo e confidencialidade:</strong><br/>
+                As informações coletadas serão utilizadas exclusivamente para fins científicos. Nenhuma informação que permita identificar os participantes será divulgada. Os dados serão armazenados em ambiente seguro, com acesso restrito e protegido por senha, sendo analisados de forma anonimizada, garantindo o sigilo e a confidencialidade.</p>
+                <p><strong>Assistência em caso de danos:</strong><br/>
+                Em caso de danos decorrentes da pesquisa, o(a) participante terá direito à assistência integral e gratuita, pelo tempo que for necessário.</p>
+                <p><strong>Indenização:</strong><br/>
+                O(a) participante terá direito à indenização caso ocorra algum dano decorrente de sua participação na pesquisa.</p>
+                <p><strong>Ressarcimento de despesas:</strong><br/>
+                Não haverá ressarcimento de despesas, tendo em vista que a participação na pesquisa não implicará custos ao participante.</p>
+                <p><strong>Acesso aos resultados:</strong><br/>
+                O(a) participante poderá ter acesso aos resultados da pesquisa a qualquer momento, mediante solicitação ao pesquisador responsável.</p>
+                <p><strong>Contatos para dúvidas:</strong><br/>
+                Caso o(a) senhor(a) tenha qualquer dúvida em relação à pesquisa, poderá entrar em contato com o pesquisador responsável:<br/>
+                Pesquisador: Marco Antonio Ferreira Almeida<br/>
+                Instituição: Escola de Saúde Pública do Distrito Federal – FEPECS<br/>
+                Telefone: (61) 98100-4381<br/>
+                Horário para contato: 7:00 às 18:00</p>
+                <p>Este projeto foi aprovado pelo Comitê de Ética em Pesquisa da Fundação de Ensino e Pesquisa em Ciências da Saúde (CEP/FEPECS), que tem como função proteger os participantes da pesquisa.<br/>
+                Caso tenha dúvidas sobre seus direitos como participante, você poderá entrar em contato com o CEP/FEPECS:<br/>
+                E-mail: cep@fepecs.edu.br<br/>
+                Telefone: (61) 3449-7895</p>
               </div>
               <label className="flex items-center gap-4 p-6 bg-blue-50/50 rounded-2xl cursor-pointer border-2 border-transparent hover:border-blue-200 transition-all group">
                 <input 
